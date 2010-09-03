@@ -11,10 +11,19 @@
     <packaging>maven-plugin</packaging>
 
     <name>Velocity Maven Plugin</name>
-    <url>http://www.rumati.net/projects/maven/plugins/velocity-maven-plugin/</url>
     <description>
         A Maven plugin that populates a template with a list of properties.
     </description>
+    <url>http://www.rumati.net/projects/maven/plugins/velocity-maven-plugin/</url>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,6 +41,36 @@
             <version>1.6.4</version>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -95,8 +134,37 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
     <reporting>
         <plugins>
             <plugin>
@@ -106,4 +174,39 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <scm>
+        <url>http://hg.rumati.net/public/java/maven/plugins/velocity-maven-plugin</url>
+        <connection>scm:hg:http://hg.rumati.net/public/java/maven/plugins/velocity-maven-plugin</connection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>oss.sonatype.org</id>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>oss.sonatype.org</id>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <site>
+            <id>local-deploy</id>
+            <url>file://${user.home}/maven-deploy/site/net/rumati/maven/plugins/velocity-maven-plugin</url>
+        </site>
+    </distributionManagement>
+
+    <developers>
+        <developer>
+            <id>jpl</id>
+            <email>jpl@unknown.za.net</email>
+            <name>Jesse Long</name>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
+    </developers>
+
+    <inceptionYear>2010</inceptionYear>
+
 </project>
