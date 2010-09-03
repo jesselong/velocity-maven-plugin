@@ -123,7 +123,7 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
-                    <goalPrefix>velocity-maven-plugin</goalPrefix>
+                    <goalPrefix>velocity</goalPrefix>
                 </configuration>
                 <executions>
                     <execution>
