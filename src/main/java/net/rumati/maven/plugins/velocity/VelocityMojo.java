@@ -63,7 +63,7 @@ public class VelocityMojo
                     engine.init();
                     VelocityContext ctx = new VelocityContext();
                     for (Map.Entry<Object, Object> e : properties.entrySet()){
-                        ctx.put(e.getKey().toString(), e.getValue().toString());
+                        ctx.put(e.getKey().toString(), e.getValue());
                     }
                     engine.evaluate(ctx, writer, "velocity-maven-plugin", reader);
                 }finally{
