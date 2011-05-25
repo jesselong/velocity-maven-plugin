@@ -14,6 +14,8 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeServices;
+import org.apache.velocity.runtime.log.LogChute;
 
 /**
  * Processes a Velocity template
@@ -59,7 +61,49 @@ public class VelocityMojo
                 Writer writer = new OutputStreamWriter(new FileOutputStream(outputFile), Charset.forName("UTF-8"));
                 try {
                     VelocityEngine engine = new VelocityEngine();
-                    engine.setProperty(VelocityEngine.RUNTIME_LOG, this);
+                    engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new LogChute() {
+
+                        public void init(RuntimeServices rs)
+                                throws Exception
+                        {
+                            /* do nothing */
+                        }
+
+                        public void log(int i, String string)
+                        {
+                            switch (i){
+                                case LogChute.INFO_ID:
+                                    VelocityMojo.this.getLog().info(string);
+                                    break;
+                                case LogChute.WARN_ID:
+                                    VelocityMojo.this.getLog().warn(string);
+                                    break;
+                                case LogChute.ERROR_ID:
+                                    VelocityMojo.this.getLog().error(string);
+                                    break;
+                            }
+                        }
+
+                        public void log(int i, String string, Throwable thrwbl)
+                        {
+                            switch (i){
+                                case LogChute.INFO_ID:
+                                    VelocityMojo.this.getLog().info(string, thrwbl);
+                                    break;
+                                case LogChute.WARN_ID:
+                                    VelocityMojo.this.getLog().warn(string, thrwbl);
+                                    break;
+                                case LogChute.ERROR_ID:
+                                    VelocityMojo.this.getLog().error(string, thrwbl);
+                                    break;
+                            }
+                        }
+
+                        public boolean isLevelEnabled(int i)
+                        {
+                            return i > LogChute.DEBUG_ID;
+                        }
+                    });
                     engine.init();
                     VelocityContext ctx = new VelocityContext();
                     for (Map.Entry<Object, Object> e : properties.entrySet()){
