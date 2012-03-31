@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>company</groupId>
+    <artifactId>company-parent-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <url>http://company/wiki/project1</url>
+  <groupId>company.project1</groupId>
+  <artifactId>foo</artifactId>
+  <developers>
+      <developer>
+          <name>Sample Developer</name>
+          <url>http://company/wiki/sampledev</url>
+      </developer>
+  </developers>
+  <contributors>
+      <contributor>
+          <name>Sample Contributor</name>
+          <url>http://company/wiki/samplecon</url>
+      </contributor>
+  </contributors>
+  <scm>
+      <url>http://company/svn/project1/</url>
+  </scm>
+  <issueManagement>
+      <system>JIRA</system>
+      <url>http://company/issues/browse/project1/</url>
+  </issueManagement>
+  <properties>
+      <customHtml><![CDATA[
+        <p>All resistence is futile!</p>
+        <a href="${project.url}">My URL</a>
+    ]]></customHtml>
+  </properties>
+</project>
