@@ -18,7 +18,7 @@
     <description>
         A Maven plugin that populates a template with a list of properties.
     </description>
-    <url>https://bitbucket.org/jesselong/velocity-maven-plugin/</url>
+    <url>https://github.com/jesselong/velocity-maven-plugin/</url>
 
     <licenses>
         <license>
@@ -153,9 +153,9 @@
     </reporting>
 
     <scm>
-        <url>https://bitbucket.org/jesselong/velocity-maven-plugin</url>
-        <connection>scm:hg:https://bitbucket.org/jesselong/velocity-maven-plugin</connection>
-        <developerConnection>scm:hg:https://bitbucket.org/jesselong/velocity-maven-plugin</developerConnection>
+        <url>https://github.com/jesselong/velocity-maven-plugin/</url>
+        <connection>scm:git:git://github.com/jesselong/velocity-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jesselong/velocity-maven-plugin.git</developerConnection>
     </scm>
 
     <distributionManagement>
