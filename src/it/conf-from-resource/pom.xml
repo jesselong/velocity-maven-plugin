@@ -59,4 +59,9 @@
             </extension>
         </extensions>
     </build>
+    <properties>
+        <customHtml><![CDATA[
+<!-- write your own html into property customHtml -->
+        ]]></customHtml>
+    </properties>
 </project>
