@@ -30,7 +30,7 @@
   </issueManagement>
   <properties>
       <customHtml><![CDATA[
-        <p>All resistence is futile!</p>
+        <p>All resistance is futile!</p>
         <a href="${project.url}">My URL</a>
     ]]></customHtml>
   </properties>
