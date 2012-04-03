@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
     <groupId>net.rumati.maven.plugins</groupId>
     <artifactId>velocity-maven-plugin</artifactId>
@@ -11,10 +15,19 @@
     <packaging>maven-plugin</packaging>
 
     <name>Velocity Maven Plugin</name>
-    <url>http://www.rumati.net/projects/maven/plugins/velocity-maven-plugin/</url>
     <description>
         A Maven plugin that populates a template with a list of properties.
     </description>
+    <url>https://bitbucket.org/jesselong/velocity-maven-plugin/</url>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,12 +37,12 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>2.2.1</version>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
-            <version>1.6.4</version>
+            <version>1.7</version>
         </dependency>
     </dependencies>
 
@@ -58,22 +71,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.3</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>2.1.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.5</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.0-beta-3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.8</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>2.3.2</version>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
@@ -82,9 +95,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.7</version>
                 <configuration>
-                    <goalPrefix>velocity-maven-plugin</goalPrefix>
+                    <goalPrefix>velocity</goalPrefix>
                 </configuration>
                 <executions>
                     <execution>
@@ -97,13 +110,42 @@
             </plugin>
         </plugins>
     </build>
+
     <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.7</version>
             </plugin>
         </plugins>
     </reporting>
+
+    <scm>
+        <url>https://bitbucket.org/jesselong/velocity-maven-plugin</url>
+        <connection>scm:hg:https://bitbucket.org/jesselong/velocity-maven-plugin</connection>
+        <developerConnection>scm:hg:https://bitbucket.org/jesselong/velocity-maven-plugin</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <site>
+            <id>local-deploy</id>
+            <url>file://${basedir}/target/site-deploy</url>
+        </site>
+    </distributionManagement>
+
+    <developers>
+        <developer>
+            <id>jpl</id>
+            <email>jpl@unknown.za.net</email>
+            <name>Jesse Long</name>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
+    </developers>
+
+    <inceptionYear>2010</inceptionYear>
+
 </project>
