@@ -176,13 +176,20 @@
 
     <developers>
         <developer>
-            <id>jpl</id>
+            <id>jesselong</id>
             <email>jpl@unknown.za.net</email>
             <name>Jesse Long</name>
             <roles>
                 <role>Developer</role>
             </roles>
             <timezone>+2</timezone>
+        </developer>
+        <developer>
+            <id>mfriedenhagen</id>
+            <name>Mirko Friedenhagen</name>
+            <roles>
+                <role>Developer</role>
+            </roles>
         </developer>
     </developers>
 
