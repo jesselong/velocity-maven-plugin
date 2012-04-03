@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>company</groupId>
+  <artifactId>company-parent-pom</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Define company-parent-pom</name>
+  <url>http://company/wiki/company-parent-pom/</url>
+  <developers>
+      <developer>
+          <name>Sample Developer</name>
+          <url>http://company/wiki/sampledev</url>
+          <roles>
+              <role>developer</role>
+          </roles>
+      </developer>
+  </developers>
+  <contributors>
+      <contributor>
+          <name>Sample Contributor</name>
+          <url>http://company/wiki/samplecon</url>
+      </contributor>
+  </contributors>
+  <scm>
+      <url>http://company/svn/company-parent-pom/</url>
+  </scm>
+  <issueManagement>
+      <system>JIRA</system>
+      <url>http://company/issues/browse/company-parent-pom/</url>
+  </issueManagement>
+  <build>
+    <plugins>
+      <plugin>
+          <groupId>@project.groupId@</groupId>
+          <artifactId>@project.artifactId@</artifactId>
+          <version>@project.version@</version>
+          <executions>
+              <execution>
+                  <id>company-parent-pom-create-jenkins-description</id>
+                  <phase>compile</phase>
+                  <goals>
+                      <goal>velocity</goal>
+                  </goals>
+                  <configuration>
+                      <template>${user.dir}/src/conf/company/conf/jenkins-description.html.vm</template>
+                      <outputFile>target/jenkins-description.html</outputFile>
+                  </configuration>
+              </execution>
+          </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

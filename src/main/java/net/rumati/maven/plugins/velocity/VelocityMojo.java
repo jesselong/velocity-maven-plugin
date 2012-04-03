@@ -6,12 +6,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Map;
+import org.apache.maven.project.MavenProject;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeServices;
@@ -27,25 +29,25 @@ public class VelocityMojo
     extends AbstractMojo
 {
     /**
-     * Template file
-     * @parameter
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
+
+    /**
+     * Template path
+     * @parameter expression="${velocity-maven-plugin.template}"
      * @required
      */
-    private File template;
+    private String template;
 
     /**
      * Output file
-     * @parameter
+     * @parameter expression="${velocity-maven-plugin.outputFile}"
      * @required
      */
     private File outputFile;
-
-    /**
-     * Properties to populate in the template
-     * @parameter
-     * @required
-     */
-    private Map<Object, Object> properties;
 
     public void execute()
         throws MojoExecutionException
@@ -56,7 +58,15 @@ public class VelocityMojo
         }
         
         try {
-            Reader reader = new InputStreamReader(new FileInputStream(template), Charset.forName("UTF-8"));
+            InputStream templateStream;
+            templateStream = this.getClass().getResourceAsStream(template);
+            if (templateStream == null) {
+                getLog().debug("Could not find a resource called " + template);
+                templateStream = new FileInputStream(template);
+            } else {
+                getLog().debug("Using resource called " + template);
+            }
+            Reader reader = new InputStreamReader(templateStream, Charset.forName("UTF-8"));
             try {
                 Writer writer = new OutputStreamWriter(new FileOutputStream(outputFile), Charset.forName("UTF-8"));
                 try {
@@ -106,9 +116,9 @@ public class VelocityMojo
                     });
                     engine.init();
                     VelocityContext ctx = new VelocityContext();
-                    for (Map.Entry<Object, Object> e : properties.entrySet()){
-                        ctx.put(e.getKey().toString(), e.getValue());
-                    }
+                    ctx.put("project", project);
+                    ctx.put("system", System.getProperties());
+                    ctx.put("env", System.getenv());
                     engine.evaluate(ctx, writer, "velocity-maven-plugin", reader);
                 }finally{
                     writer.close();
