@@ -39,7 +39,8 @@ The plugin defines the following parameters in the Velocity context (in addition
 element) -
 
 * content - content of input file
+* inputPath - Path of input file
 * inputFile - Name of input file, including path in FileSet directory
-* inputRoot - Path to FileSet directory
+* outputPath - Path of output file
 * outputFile - Name of output file, including path in FileSet outputDirectory
-* outputRoot - Path to FileSet outputDirectory
+* relativePath - Relative path to FileSet outputDirectory

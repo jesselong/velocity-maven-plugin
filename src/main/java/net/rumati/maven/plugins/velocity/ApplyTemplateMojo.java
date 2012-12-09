@@ -108,10 +108,11 @@ public class ApplyTemplateMojo extends AbstractMojo {
 
             Properties templateProperties = new Properties(properties);
             templateProperties.put("content", readFile(inputFile, characterSet));
+            templateProperties.put("inputPath", getRelativePath(fileSet.getDirectory(), inputDirectory.getAbsolutePath()));
             templateProperties.put("inputFile", inputFilename);
-            templateProperties.put("inputRoot", PathTool.getRelativeFilePath(inputDirectory.getAbsolutePath(), fileSet.getDirectory()));
+            templateProperties.put("outputPath", getRelativePath(fileSet.getOutputDirectory(), outputDirectory.getAbsolutePath()));
             templateProperties.put("outputFile", outputFilename);
-            templateProperties.put("outputRoot", PathTool.getRelativeFilePath(outputDirectory.getAbsolutePath(), fileSet.getOutputDirectory()));
+            templateProperties.put("relativePath", getRelativePath(outputDirectory.getAbsolutePath(), fileSet.getOutputDirectory()));
 
             applyTemplate(engine, outputFile, templateFile, templateProperties, characterSet);
         }
@@ -124,6 +125,15 @@ public class ApplyTemplateMojo extends AbstractMojo {
         } catch (MapperException e) {
             throw new MojoExecutionException("Failed to map input to output", e);
         }
+    }
+
+    protected String getRelativePath(String oldPath, String newPath) {
+        String path = PathTool.getRelativeFilePath(oldPath, newPath);
+        if (path.isEmpty()) {
+            // Ensure path is never empty
+            return ".";
+        }
+        return path;
     }
 
     private String readFile(File file, Charset encoding) throws MojoExecutionException {
