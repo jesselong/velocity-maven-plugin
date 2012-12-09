@@ -37,6 +37,8 @@ apply-template - apply a template to a set of files
 The plugin defines the following parameters in the Velocity context (in addition to those defined in the properties
 element) -
 
-* bodyContent - content of input file
-* currentFileName - Filename of output file relative to base output directory
-* relativePath - Path from file output directory to base output directory
+* content - content of input file
+* inputFile - Name of input file, including path in FileSet directory
+* inputRoot - Path to FileSet directory
+* outputFile - Name of output file, including path in FileSet outputDirectory
+* outputRoot - Path to FileSet outputDirectory

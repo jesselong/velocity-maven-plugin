@@ -83,6 +83,7 @@ public class ApplyTemplateMojo extends AbstractMojo {
         for (Map.Entry<String, String> inputOutput : getInputOutputMap(fileSetManager, fileSet).entrySet()) {
             String inputFilename = inputOutput.getKey();
             File inputFile = new File(fileSet.getDirectory(), inputFilename);
+            File inputDirectory = inputFile.getParentFile();
 
             String outputFilename = inputOutput.getValue();
             File outputFile = new File(fileSet.getOutputDirectory(), outputFilename);
@@ -94,9 +95,11 @@ public class ApplyTemplateMojo extends AbstractMojo {
             }
 
             Properties templateProperties = new Properties(properties);
-            templateProperties.put("bodyContent", readFile(inputFile, characterSet));
-            templateProperties.put("currentFileName", outputFilename);
-            templateProperties.put("relativePath", PathTool.getRelativeFilePath(outputDirectory.getAbsolutePath(), fileSet.getOutputDirectory()));
+            templateProperties.put("content", readFile(inputFile, characterSet));
+            templateProperties.put("inputFile", inputFilename);
+            templateProperties.put("inputRoot", PathTool.getRelativeFilePath(inputDirectory.getAbsolutePath(), fileSet.getDirectory()));
+            templateProperties.put("outputFile", outputFilename);
+            templateProperties.put("outputRoot", PathTool.getRelativeFilePath(outputDirectory.getAbsolutePath(), fileSet.getOutputDirectory()));
 
             applyTemplate(outputFile, templateFile, templateProperties, characterSet);
         }
