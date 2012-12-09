@@ -34,10 +34,16 @@ public class ApplyTemplateMojo extends AbstractMojo {
 
     /**
      * Template path
-     * @parameter expression="${velocity-maven-plugin.template}"
+     * @parameter expression="${velocity-maven-plugin.templateDir}"
+     */
+    private File templateDirectory;
+
+    /**
+     * Template name
+     * @parameter expression="${velocity-maven-plugin.templateName}"
      * @required
      */
-    private File template;
+    private String templateName;
 
     /**
      * File set
@@ -77,7 +83,13 @@ public class ApplyTemplateMojo extends AbstractMojo {
 
         getLog().debug("Using character set: " + characterSet.displayName());
 
-        String templateFile = readFile(template, characterSet);
+        if (templateDirectory == null) {
+            templateDirectory = new File(fileSet.getDirectory());
+        }
+
+        VelocityEngine engine = createEngine(templateDirectory.getAbsolutePath());
+
+        String templateFile = readFile(new File(templateDirectory, templateName), characterSet);
 
         FileSetManager fileSetManager = new FileSetManager(getLog());
         for (Map.Entry<String, String> inputOutput : getInputOutputMap(fileSetManager, fileSet).entrySet()) {
@@ -101,7 +113,7 @@ public class ApplyTemplateMojo extends AbstractMojo {
             templateProperties.put("outputFile", outputFilename);
             templateProperties.put("outputRoot", PathTool.getRelativeFilePath(outputDirectory.getAbsolutePath(), fileSet.getOutputDirectory()));
 
-            applyTemplate(outputFile, templateFile, templateProperties, characterSet);
+            applyTemplate(engine, outputFile, templateFile, templateProperties, characterSet);
         }
     }
 
@@ -122,13 +134,22 @@ public class ApplyTemplateMojo extends AbstractMojo {
         }
     }
 
-    protected void applyTemplate(File outputFile, String template, Properties templateProperties, Charset characterSet) throws MojoExecutionException {
+    protected VelocityEngine createEngine(String templatePath) {
+        VelocityEngine engine = new VelocityEngine();
+        engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
+        engine.setProperty("resource.loader", "file, fallback");
+        engine.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+        engine.setProperty("file.resource.loader.path", templatePath);
+        engine.setProperty("fallback.resource.loader.class", "net.rumati.maven.plugins.velocity.MissingResourceLoader");
+        engine.init();
+
+        return engine;
+    }
+
+    protected void applyTemplate(VelocityEngine engine, File outputFile, String template, Properties templateProperties, Charset characterSet) throws MojoExecutionException {
         try {
             Writer writer = new OutputStreamWriter(new FileOutputStream(outputFile), characterSet);
             try {
-                VelocityEngine engine = new VelocityEngine();
-                engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
-                engine.init();
                 VelocityContext ctx = new VelocityContext(templateProperties);
                 if (!engine.evaluate(ctx, writer, "velocity-maven-plugin", template)) {
                     throw new MojoExecutionException("Failed to apply template");
