@@ -14,6 +14,7 @@ import org.codehaus.plexus.util.PathTool;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -120,11 +121,15 @@ public class ApplyTemplateMojo extends AbstractMojo {
 
     @SuppressWarnings("unchecked")
     protected Map<String, String> getInputOutputMap(FileSetManager fileSetManager, FileSet fileSet) throws MojoExecutionException {
-        try {
-            return fileSetManager.mapIncludedFiles(fileSet);
-        } catch (MapperException e) {
-            throw new MojoExecutionException("Failed to map input to output", e);
+        Map<String, String> mappedFiles = new HashMap<String, String>();
+
+        String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);
+        for (String includedFile : includedFiles) {
+            // Use simple identity mapping
+            mappedFiles.put(includedFile, includedFile);
         }
+
+        return mappedFiles;
     }
 
     protected String getRelativePath(String oldPath, String newPath) {
