@@ -84,22 +84,31 @@ public class ApplyTemplateMojo extends AbstractMojo {
 
         getLog().debug("Using character set: " + characterSet.displayName());
 
-        VelocityEngine engine = createEngine();
+        VelocityEngineBuilder engineBuilder = new VelocityEngineBuilder().
+                withLogChute(new MavenLogChute(getLog()));
 
-        String templateFile;
+        String velocityMacro;
         try {
             InputStream templateStream = getClass().getResourceAsStream(template);
             if (templateStream == null) {
                 getLog().debug("Could not find a resource called " + template + ", trying as a file name");
                 templateStream = new FileInputStream(template);
             } else {
+                engineBuilder.withClasspathLoader();
                 getLog().debug("Using resource called " + template);
             }
-            templateFile = IOUtil.toString(templateStream, characterSet.name());
+            velocityMacro = IOUtil.toString(templateStream, characterSet.name());
         } catch (IOException ioe) {
             throw new MojoExecutionException("Failed to read " + template, ioe);
         }
 
+        engineBuilder.withFileLoader(fileSet.getDirectory());
+        if (templateDirectory != null) {
+            engineBuilder.withFileLoader(templateDirectory.getAbsolutePath());
+        }
+        engineBuilder.withFallbackLoader();
+
+        VelocityEngine engine = engineBuilder.build();
         FileSetManager fileSetManager = new FileSetManager(getLog());
         for (Map.Entry<String, String> inputOutput : getInputOutputMap(fileSetManager, fileSet).entrySet()) {
             String inputFilename = inputOutput.getKey();
@@ -127,7 +136,7 @@ public class ApplyTemplateMojo extends AbstractMojo {
             templateProperties.put("system", System.getProperties());
             templateProperties.put("env", System.getenv());
 
-            applyTemplate(engine, outputFile, templateFile, templateProperties, characterSet);
+            applyTemplate(engine, outputFile, velocityMacro, templateProperties, characterSet);
         }
     }
 
@@ -159,22 +168,6 @@ public class ApplyTemplateMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to read " + file.getAbsolutePath(), e);
         }
-    }
-
-    protected VelocityEngine createEngine() {
-        VelocityEngine engine = new VelocityEngine();
-        engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
-        engine.setProperty("resource.loader", "file, fallback");
-
-        engine.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
-        engine.setProperty("file.resource.loader.path", fileSet.getDirectory());
-        if (templateDirectory != null) {
-            engine.addProperty("file.resource.loader.path", templateDirectory.getAbsolutePath());
-        }
-        engine.setProperty("fallback.resource.loader.class", "net.rumati.maven.plugins.velocity.MissingResourceLoader");
-        engine.init();
-
-        return engine;
     }
 
     protected void applyTemplate(VelocityEngine engine, File outputFile, String template, Properties templateProperties, Charset characterSet) throws MojoExecutionException {
