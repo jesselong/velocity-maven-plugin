@@ -84,23 +84,27 @@ public class VelocityMojo
         if (!parentDirectory.isDirectory() && !parentDirectory.mkdirs()){
             throw new MojoExecutionException("Error creating output directory: " + parentDirectory.getAbsolutePath());
         }
-        
+
+        VelocityEngineBuilder engineBuilder = new VelocityEngineBuilder().
+                withLogChute(new MavenLogChute(getLog()));
+
         try {
             InputStream templateStream;
             templateStream = this.getClass().getResourceAsStream(template);
             if (templateStream == null) {
                 getLog().debug("Could not find a resource called " + template + ", trying as a file name");
-                templateStream = new FileInputStream(template);
+                File templateFile = new File(template);
+                templateStream = new FileInputStream(templateFile);
+                engineBuilder.withFileLoader(templateFile.getParent());
             } else {
                 getLog().debug("Using resource called " + template);
+                engineBuilder.withClasspathLoader();
             }
             Reader reader = new InputStreamReader(templateStream, characterSet);
             try {
                 Writer writer = new OutputStreamWriter(new FileOutputStream(outputFile), characterSet);
                 try {
-                    VelocityEngine engine = new VelocityEngine();
-                    engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
-                    engine.init();
+                    VelocityEngine engine = engineBuilder.build();
                     VelocityContext ctx = new VelocityContext(properties);
                     ctx.put("project", project);
                     ctx.put("system", System.getProperties());
