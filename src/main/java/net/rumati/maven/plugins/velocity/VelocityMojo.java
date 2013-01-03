@@ -1,21 +1,21 @@
 package net.rumati.maven.plugins.velocity;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.Properties;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeServices;
-import org.apache.velocity.runtime.log.LogChute;
 
 /**
  * Processes a Velocity template
@@ -27,88 +27,88 @@ public class VelocityMojo
     extends AbstractMojo
 {
     /**
-     * Template file
-     * @parameter
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
+
+    /**
+     * Template path
+     * @parameter expression="${velocity-maven-plugin.template}"
      * @required
      */
-    private File template;
+    private String template;
 
     /**
      * Output file
-     * @parameter
+     * @parameter expression="${velocity-maven-plugin.outputFile}"
      * @required
      */
     private File outputFile;
 
     /**
-     * Properties to populate in the template
-     * @parameter
-     * @required
+     * Properties passed to Velocity context.
+     * @parameter expression="${velocity-maven-plugin.properties}"
      */
-    private Map<Object, Object> properties;
+    private Properties properties;
+
+    /**
+     * The character set encoding to be used when reading and writing files.
+     * If this is not set, then {@code project.build.sourceEncoding} is used.
+     * If {@code project.build.sourceEncoding} is also not set, then the default
+     * character set encoding is used.
+     * @parameter expression="${velocity-maven-plugin.encoding}"
+     */
+    private String encoding;
 
     public void execute()
         throws MojoExecutionException
     {
+        Charset characterSet = null;
+        
+        if (encoding == null){
+            encoding = project.getProperties().getProperty("project.build.sourceEncoding");
+        }
+        
+        if (encoding == null){
+            getLog().warn("Using default character set encoding");
+            characterSet = Charset.defaultCharset();
+        }else{
+            characterSet = Charset.forName(encoding);
+        }
+
+        getLog().debug("Using character set: " + characterSet.displayName());
+        
         File parentDirectory = outputFile.getParentFile();
         if (!parentDirectory.isDirectory() && !parentDirectory.mkdirs()){
             throw new MojoExecutionException("Error creating output directory: " + parentDirectory.getAbsolutePath());
         }
-        
+
+        VelocityEngineBuilder engineBuilder = new VelocityEngineBuilder().
+                withLogChute(new MavenLogChute(getLog()));
+
         try {
-            Reader reader = new InputStreamReader(new FileInputStream(template), Charset.forName("UTF-8"));
+            InputStream templateStream;
+            templateStream = this.getClass().getResourceAsStream(template);
+            if (templateStream == null) {
+                getLog().debug("Could not find a resource called " + template + ", trying as a file name");
+                File templateFile = new File(template);
+                templateStream = new FileInputStream(templateFile);
+                engineBuilder.withFileLoader(templateFile.getParent());
+            } else {
+                getLog().debug("Using resource called " + template);
+                engineBuilder.withClasspathLoader();
+            }
+            Reader reader = new InputStreamReader(templateStream, characterSet);
             try {
-                Writer writer = new OutputStreamWriter(new FileOutputStream(outputFile), Charset.forName("UTF-8"));
+                Writer writer = new OutputStreamWriter(new FileOutputStream(outputFile), characterSet);
                 try {
-                    VelocityEngine engine = new VelocityEngine();
-                    engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new LogChute() {
-
-                        public void init(RuntimeServices rs)
-                                throws Exception
-                        {
-                            /* do nothing */
-                        }
-
-                        public void log(int i, String string)
-                        {
-                            switch (i){
-                                case LogChute.INFO_ID:
-                                    VelocityMojo.this.getLog().info(string);
-                                    break;
-                                case LogChute.WARN_ID:
-                                    VelocityMojo.this.getLog().warn(string);
-                                    break;
-                                case LogChute.ERROR_ID:
-                                    VelocityMojo.this.getLog().error(string);
-                                    break;
-                            }
-                        }
-
-                        public void log(int i, String string, Throwable thrwbl)
-                        {
-                            switch (i){
-                                case LogChute.INFO_ID:
-                                    VelocityMojo.this.getLog().info(string, thrwbl);
-                                    break;
-                                case LogChute.WARN_ID:
-                                    VelocityMojo.this.getLog().warn(string, thrwbl);
-                                    break;
-                                case LogChute.ERROR_ID:
-                                    VelocityMojo.this.getLog().error(string, thrwbl);
-                                    break;
-                            }
-                        }
-
-                        public boolean isLevelEnabled(int i)
-                        {
-                            return i > LogChute.DEBUG_ID;
-                        }
-                    });
-                    engine.init();
-                    VelocityContext ctx = new VelocityContext();
-                    for (Map.Entry<Object, Object> e : properties.entrySet()){
-                        ctx.put(e.getKey().toString(), e.getValue());
-                    }
+                    VelocityEngine engine = engineBuilder.build();
+                    VelocityContext ctx = new VelocityContext(properties);
+                    ctx.put("project", project);
+                    ctx.put("system", System.getProperties());
+                    ctx.put("env", System.getenv());
                     engine.evaluate(ctx, writer, "velocity-maven-plugin", reader);
                 }finally{
                     writer.close();
