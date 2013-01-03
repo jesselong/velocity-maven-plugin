@@ -9,6 +9,8 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Properties;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -44,7 +46,13 @@ public class VelocityMojo
      * @required
      */
     private File outputFile;
-    
+
+    /**
+     * Properties passed to Velocity context.
+     * @parameter expression="${velocity-maven-plugin.properties}"
+     */
+    private Properties properties;
+
     /**
      * The character set encoding to be used when reading and writing files.
      * If this is not set, then {@code project.build.sourceEncoding} is used.
@@ -93,7 +101,7 @@ public class VelocityMojo
                     VelocityEngine engine = new VelocityEngine();
                     engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
                     engine.init();
-                    VelocityContext ctx = new VelocityContext();
+                    VelocityContext ctx = new VelocityContext(properties);
                     ctx.put("project", project);
                     ctx.put("system", System.getProperties());
                     ctx.put("env", System.getenv());

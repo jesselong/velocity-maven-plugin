@@ -20,11 +20,15 @@ velocity - execute a template
         <configuration>
             <template>src/main/velocity/report.vm</template>
             <outputFile>target/report.html</outputFile>
+            <properties>
+                <aProperty>aValue</aProperty>
+            </properties>
             <encoding>UTF8</encoding>
         </configuration>
     </plugin>
 
-The plugin defines the following parameters in the Velocity context -
+The plugin defines the following parameters in the Velocity context (in addition to those defined in the properties
+element) -
 
 * project.* - Maven project properties
 * system.* - Properties in System.getProperties
