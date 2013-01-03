@@ -4,7 +4,31 @@ velocity-maven-plugin
 Goals
 -----
 
-velocity - apply a template
+velocity - execute a template
+
+    <plugin>
+        <groupId>net.rumati.maven.plugins</groupId>
+        <artifactId>velocity-maven-plugin</artifactId>
+        <executions>
+            <execution>
+                <phase>generate-resources</phase>
+                <goals>
+                    <goal>velocity</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <template>src/main/velocity/report.vm</template>
+            <outputFile>target/report.html</outputFile>
+            <encoding>UTF8</encoding>
+        </configuration>
+    </plugin>
+
+The plugin defines the following parameters in the Velocity context -
+
+* project.* - Maven project properties
+* system.* - Properties in System.getProperties
+* env.* - Properties in System.getenv
 
 apply-template - apply a template to a set of files
 
@@ -32,6 +56,7 @@ apply-template - apply a template to a set of files
             <properties>
                 <aProperty>aValue</aProperty>
             </properties>
+            <encoding>UTF8</encoding>
         </configuration>
     </plugin>
 
