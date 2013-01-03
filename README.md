@@ -21,7 +21,7 @@ apply-template - apply a template to a set of files
         </executions>
         <configuration>
             <templateDirectory>src/main/velocity</templateDirectory>
-            <templateName>template.vm</templateName>
+            <template>src/main/velocity/template.vm</template>
             <fileSet>
                 <directory>src/main/html</directory>
                 <includes>
