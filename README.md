@@ -44,3 +44,6 @@ element) -
 * outputPath - Path of output file
 * outputFile - Name of output file, including path in FileSet outputDirectory
 * relativePath - Relative path to FileSet outputDirectory
+* project.* - Maven project properties
+* system.* - Properties in System.getProperties
+* env.* - Properties in System.getenv

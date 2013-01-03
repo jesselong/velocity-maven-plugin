@@ -115,6 +115,10 @@ public class ApplyTemplateMojo extends AbstractMojo {
             templateProperties.put("outputFile", outputFilename);
             templateProperties.put("relativePath", getRelativePath(outputDirectory.getAbsolutePath(), fileSet.getOutputDirectory()));
 
+            templateProperties.put("project", project);
+            templateProperties.put("system", System.getProperties());
+            templateProperties.put("env", System.getenv());
+
             applyTemplate(engine, outputFile, templateFile, templateProperties, characterSet);
         }
     }
