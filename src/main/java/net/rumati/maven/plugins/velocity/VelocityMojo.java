@@ -19,7 +19,8 @@ import org.apache.velocity.app.VelocityEngine;
  * Processes a Velocity template
  *
  * @goal velocity
- * @phase process-resources
+ * @requiresDependencyResolution runtime
+ * @requiresDependencyResolution test
  */
 public class VelocityMojo
     extends AbstractMojo
