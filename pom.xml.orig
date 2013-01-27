@@ -11,7 +11,7 @@
 
     <groupId>net.rumati.maven.plugins</groupId>
     <artifactId>velocity-maven-plugin</artifactId>
-    <version>0.3.0</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Velocity Maven Plugin</name>
@@ -135,7 +135,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-invoker-plugin</artifactId>
-                <version>1.8</version>
+                <version>1.5</version>
                 <configuration>
                     <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                     <showErrors>true</showErrors>
@@ -143,9 +143,6 @@
                     <settingsFile>src/it/settings.xml</settingsFile>
                     <postBuildHookScript>verify</postBuildHookScript>
                     <addTestClassPath>true</addTestClassPath>
-                    <pomExcludes>
-                        <pomExclude>**/conf-*/pom.xml</pomExclude>
-                    </pomExcludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -179,20 +176,13 @@
 
     <developers>
         <developer>
-            <id>jesselong</id>
+            <id>jpl</id>
             <email>jpl@unknown.za.net</email>
             <name>Jesse Long</name>
             <roles>
                 <role>Developer</role>
             </roles>
             <timezone>+2</timezone>
-        </developer>
-        <developer>
-            <id>mfriedenhagen</id>
-            <name>Mirko Friedenhagen</name>
-            <roles>
-                <role>Developer</role>
-            </roles>
         </developer>
     </developers>
 
