@@ -9,6 +9,8 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.List;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -35,16 +37,20 @@ public class VelocityMojo
     /**
      * Template path
      * @parameter expression="${velocity-maven-plugin.template}"
-     * @required
      */
     private String template;
 
     /**
      * Output file
      * @parameter expression="${velocity-maven-plugin.outputFile}"
-     * @required
      */
     private File outputFile;
+    
+    /**
+     * List of transformations (tuple <template> + <outputFile>)
+     * @parameter
+     */
+    private Transformation[] transformations; 
     
     /**
      * The character set encoding to be used when reading and writing files.
@@ -73,32 +79,43 @@ public class VelocityMojo
 
         getLog().debug("Using character set: " + characterSet.displayName());
         
-        File parentDirectory = outputFile.getParentFile();
+        VelocityEngine engine = new VelocityEngine();
+        engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
+        engine.init();
+        if (template != null && outputFile != null) {
+          singleTransfo(engine, template, outputFile, characterSet);
+        }
+        if (transformations != null) {
+          for (Transformation t : transformations) {
+              singleTransfo(engine, t.template, t.outputFile, characterSet);
+          }
+        }
+    }
+    
+    private void singleTransfo(VelocityEngine engine, String in, File out, Charset characterSet) throws MojoExecutionException{
+        File parentDirectory = out.getParentFile();
         if (!parentDirectory.isDirectory() && !parentDirectory.mkdirs()){
             throw new MojoExecutionException("Error creating output directory: " + parentDirectory.getAbsolutePath());
         }
-        
+
         try {
             InputStream templateStream;
-            templateStream = this.getClass().getResourceAsStream(template);
+            templateStream = this.getClass().getResourceAsStream(in);
             if (templateStream == null) {
-                getLog().debug("Could not find a resource called " + template + ", trying as a file name");
-                templateStream = new FileInputStream(template);
+                getLog().debug("Could not find a resource called " + in + ", trying as a file name");
+                templateStream = new FileInputStream(in);
             } else {
-                getLog().debug("Using resource called " + template);
+                getLog().debug("Using resource called " + in);
             }
             Reader reader = new InputStreamReader(templateStream, characterSet);
             try {
-                Writer writer = new OutputStreamWriter(new FileOutputStream(outputFile), characterSet);
+                Writer writer = new OutputStreamWriter(new FileOutputStream(out), characterSet);
                 try {
-                    VelocityEngine engine = new VelocityEngine();
-                    engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
-                    engine.init();
-                    VelocityContext ctx = new VelocityContext();
-                    ctx.put("project", project);
-                    ctx.put("system", System.getProperties());
-                    ctx.put("env", System.getenv());
-                    engine.evaluate(ctx, writer, "velocity-maven-plugin", reader);
+                  VelocityContext ctx = new VelocityContext();
+                  ctx.put("project", project);
+                  ctx.put("system", System.getProperties());
+                  ctx.put("env", System.getenv());
+                  engine.evaluate(ctx, writer, "velocity-maven-plugin", reader);
                 }finally{
                     writer.close();
                 }
