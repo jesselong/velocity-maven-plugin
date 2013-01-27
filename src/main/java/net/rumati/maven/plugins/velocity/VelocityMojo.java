@@ -79,20 +79,17 @@ public class VelocityMojo
 
         getLog().debug("Using character set: " + characterSet.displayName());
         
-        VelocityEngine engine = new VelocityEngine();
-        engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
-        engine.init();
         if (template != null && outputFile != null) {
-          singleTransfo(engine, template, outputFile, characterSet);
+          singleTransfo(template, outputFile, characterSet);
         }
         if (transformations != null) {
           for (Transformation t : transformations) {
-              singleTransfo(engine, t.template, t.outputFile, characterSet);
+              singleTransfo(t.template, t.outputFile, characterSet);
           }
         }
     }
     
-    private void singleTransfo(VelocityEngine engine, String in, File out, Charset characterSet) throws MojoExecutionException{
+    private void singleTransfo(String in, File out, Charset characterSet) throws MojoExecutionException{
         File parentDirectory = out.getParentFile();
         if (!parentDirectory.isDirectory() && !parentDirectory.mkdirs()){
             throw new MojoExecutionException("Error creating output directory: " + parentDirectory.getAbsolutePath());
@@ -111,6 +108,9 @@ public class VelocityMojo
             try {
                 Writer writer = new OutputStreamWriter(new FileOutputStream(out), characterSet);
                 try {
+                  VelocityEngine engine = new VelocityEngine();
+                  engine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new MavenLogChute(getLog()));
+                  engine.init();
                   VelocityContext ctx = new VelocityContext();
                   ctx.put("project", project);
                   ctx.put("system", System.getProperties());
