@@ -25,7 +25,7 @@ public class VelocityMojo
     extends AbstractMojo
 {
     /**
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -33,14 +33,14 @@ public class VelocityMojo
 
     /**
      * Template path
-     * @parameter expression="${velocity-maven-plugin.template}"
+     * @parameter property="velocity-maven-plugin.template"
      * @required
      */
     private String template;
 
     /**
      * Output file
-     * @parameter expression="${velocity-maven-plugin.outputFile}"
+     * @parameter property="velocity-maven-plugin.outputFile"
      * @required
      */
     private File outputFile;
@@ -50,7 +50,7 @@ public class VelocityMojo
      * If this is not set, then {@code project.build.sourceEncoding} is used.
      * If {@code project.build.sourceEncoding} is also not set, then the default
      * character set encoding is used.
-     * @parameter expression="${velocity-maven-plugin.encoding}"
+     * @parameter property="velocity-maven-plugin.encoding"
      */
     private String encoding;
 
