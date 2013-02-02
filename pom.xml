@@ -20,7 +20,7 @@
 
     <name>Velocity Maven Plugin</name>
     <description>
-        A Maven plugin that populates a template with a list of properties.
+        A Maven plugin that uses Apache Velocity to process templates, populating variables from the Maven POM.
     </description>
     <url>https://github.com/jesselong/velocity-maven-plugin/</url>
 
@@ -196,6 +196,13 @@
             </roles>
         </developer>
     </developers>
+
+    <contributors>
+        <contributor>
+            <name>David Bernard</name>
+            <url>https://github.com/davidB</url>
+        </contributor>
+    </contributors>
 
     <inceptionYear>2010</inceptionYear>
 

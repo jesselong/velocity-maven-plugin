@@ -32,7 +32,7 @@ public class VelocityMojo
      */
     protected MavenProject project;
     /**
-     * Template path
+     * The template. This can be either a path to a file or a path to a resource somewhere in the classpath.
      *
      * @parameter property="velocity-maven-plugin.template"
      */
