@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>company</groupId>
+    <groupId>test</groupId>
     <artifactId>company-parent-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <url>http://company/wiki/project1</url>
-  <groupId>company.project1</groupId>
+  <groupId>test.project1</groupId>
   <artifactId>foo</artifactId>
   <developers>
       <developer>
