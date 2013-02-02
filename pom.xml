@@ -15,7 +15,7 @@
 
     <groupId>net.rumati.maven.plugins</groupId>
     <artifactId>velocity-maven-plugin</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Velocity Maven Plugin</name>
